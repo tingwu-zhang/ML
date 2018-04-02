@@ -6,7 +6,9 @@ import numpy as np
 import inferency
 
 import train
-
+#2
+#2
+#2
 
 EVAL_INTERVAL_SEC = 10
 
