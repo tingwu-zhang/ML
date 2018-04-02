@@ -37,4 +37,4 @@ with tf.Session() as sess:
         print sess.run(W), sess.run(b)
 
 
-        plt.scatter()
+
