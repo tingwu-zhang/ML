@@ -48,7 +48,7 @@ def predict(path,filename):
         y_ = tf.placeholder(tf.float32, [1, inferency.OUTPUT_NODE], name='y-input')
 
         y = inferency.interfence(x, False, None)
-        prediction = tf.argmax(y,1)
+        prediction = tf.argmax(tf.clip_by_value(y,1e-8,1.0),1)
 
         variable_average = tf.train.ExponentialMovingAverage(MOVING_AVERAGE_DECAY)
         variables_to_restore = variable_average.variables_to_restore()

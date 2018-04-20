@@ -13,7 +13,6 @@ REGULARAZTION_RATE = 0.0001
 TRAINING_STEPS = 30000
 MOVING_AVERAGE_DECAY = 0.99
 
-
 MODEL_SAVE_PATH = "../model"
 MODEL_NAME = "model.ckpt"
 
@@ -43,7 +42,7 @@ def evalate(filename):
         y_ = tf.placeholder(tf.float32, [None, inferency.OUTPUT_NODE], name='y-input')
 
         y = inferency.interfence(x, False, None)
-
+        y = tf.clip_by_value(y, -1e+8, 1e+8)
         correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 

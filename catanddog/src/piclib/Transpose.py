@@ -52,7 +52,7 @@ def pre_process(srcpath,destpath,method):
     for img_name in os.listdir(srcpath):
 
         img = Image.open(os.path.join(srcpath, img_name))
-
+        final_image = img
         if method == 0:
             final_image = img.rotate(45)
         elif method == 1:
@@ -225,15 +225,15 @@ if __name__ == "__main__":
     # pre_process(NORMAL_PATH, ROTATE_PATH,0)
     # pre_process(NORMAL_PATH, FLIP_TB_PATH,1)
     # pre_process(NORMAL_PATH, BLUR_PATH,2)
-    pre_process(NORMAL_PATH, FLIP_LR_PATH,3)
-    pre_process(NORMAL_PATH, ROTATE90_PATH,4)
-
-    # test_encode(NORMAL_PATH, TFRECORD_NORMAL_FILENAME)
+    # pre_process(NORMAL_PATH, FLIP_LR_PATH,3)
+    # pre_process(NORMAL_PATH, ROTATE90_PATH,4)
+    #
+    test_encode(NORMAL_PATH, TFRECORD_NORMAL_FILENAME)
     # test_encode(FLIP_TB_PATH, TFRECORD_TB_FILENAME)
     # test_encode(ROTATE_PATH, TFRECORD_ROTATE_FILENAME)
     # test_encode(BLUR_PATH, TFRECORD_BLUR_FILENAME)
-    test_encode(FLIP_LR_PATH, TFRECORD_LR_FILENAME)
-    test_encode(ROTATE90_PATH, TFRECORD_ROTATE90_FILENAME)
+    # test_encode(FLIP_LR_PATH, TFRECORD_LR_FILENAME)
+    # test_encode(ROTATE90_PATH, TFRECORD_ROTATE90_FILENAME)
     # test_one_by_one(TFRECORD_FILENAME+".validation")
 
     # test_batch(TFRECORD_FILENAME)
