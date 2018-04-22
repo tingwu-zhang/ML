@@ -10,4 +10,6 @@
 
     git remote add origin https://github.com/tingwu-zhang/ML.git
 	git push -u origin master
+	git push -u origin master
+	git push -u origin master
 	
