@@ -15,7 +15,6 @@ import numpy as np
 from PIL import Image , ImageFilter
 from pylab import *
 
-import ReadJpg
 
 def __int64_feature(value):
     return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
@@ -24,7 +23,7 @@ def __bytes_feature(value):
     return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
 
 
-NORMAL_PATH = "../../data/train/"
+NORMAL_PATH = "/home/tingwu/workspace/data/lintcatanddog/train"
 
 FLIP_LR_PATH = "../../data/flip_left_right_processed/"
 FLIP_TB_PATH = "../../data/flip_top_bottom_processed/"
@@ -72,7 +71,7 @@ def pre_process(srcpath,destpath,method):
         mean_img.save(os.path.join(destpath, img_name))
 
 
-        print os.path.join(srcpath, img_name) + ' is processed '
+        print(os.path.join(srcpath, img_name) + ' is processed ')
 
 
 
@@ -96,7 +95,7 @@ def encode_to_tfrecords(path, filename):
             'label': __int64_feature(label),
             'image_raw': __bytes_feature(img.tobytes())
         }))
-        print os.path.join(path, img_name) + ' is processed '
+        print (os.path.join(path, img_name) + ' is processed ')
 
         chance = np.random.randint(1, 99)
         if chance < 12:

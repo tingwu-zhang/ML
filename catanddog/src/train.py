@@ -16,8 +16,7 @@ REGULARAZTION_RATE = 0.001
 TRAINING_STEPS = 300000
 MOVING_AVERAGE_DECAY = 0.99
 
-MERGE_TEST="/home"
-MODEL_SAVE_PATH = "/home/zhangtx/newgit/machinelearning/catanddog/model"
+MODEL_SAVE_PATH = "../model"
 MODEL_NAME = "model.ckpt"
 
 def train(filename):
@@ -37,7 +36,7 @@ def train(filename):
         tf.trainable_variables())
 
 
-    y=tf.clip_by_value(y,-1e+8,1e+8)
+    y=tf.clip_by_value(y,1e-8,1e+8)
     cross_entroy = tf.nn.sparse_softmax_cross_entropy_with_logits(
          logits=y, labels=tf.argmax(y_, 1))
     cross_entroy_mean = tf.reduce_mean(cross_entroy)
@@ -76,7 +75,7 @@ def train(filename):
             reshaped_ys = piclib.common.oneShot(raw_label, 2)
             _, loss_value, step, summary = sess.run([train_op, loss, global_step,merged_summary],
                                             feed_dict={x: reshaped_xs, y_: reshaped_ys})
-            print sess.run(y,feed_dict={x: reshaped_xs, y_: reshaped_ys})
+            # print(sess.run(y,feed_dict={x: reshaped_xs, y_: reshaped_ys}))
 
             if i % 50 == 0:
                 print("After %d training steps,loss on training batch is %g." % (step, loss_value))
