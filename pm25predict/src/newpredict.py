@@ -4,12 +4,13 @@ import os
 import tensorflow as tf
 import numpy as np
 import csv
+import time
 BATCH_SIZE = 144
 
 MOVING_AVERAGE_DECAY = 0.99
 FEATURE_NUM = 10
 
-MODEL_SAVE_PATH = "/home/zhangtx/ml/pm25predict/model"
+MODEL_SAVE_PATH = "/home/tingwu/workspace/newgit/pm25predict/model"
 MODEL_NAME = "model.ckpt"
 
 # DEFAULT_FEATURE = [[''], [0], [0.0], [0.0], [0.0], [0.0], [0.0], [0.0], [0.0], [0.0], [0.0], [0.0]]
@@ -117,7 +118,9 @@ def predict(feature,result):
 
 
 def main(argv=None):
-    predict(TESTFILENAME, SUBMISSION)
+    while True:
+        predict(TESTFILENAME, SUBMISSION)
+        time.sleep(10)
 
 
 if __name__ == '__main__':

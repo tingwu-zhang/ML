@@ -11,7 +11,7 @@ TRAINING_STEPS = 40000
 MOVING_AVERAGE_DECAY = 0.99
 FEATURE_NUM = 10
 
-MODEL_SAVE_PATH = "/home/zhangtx/ml/pm25predict/model"
+MODEL_SAVE_PATH = "/home/tingwu/workspace/newgit/pm25predict/model"
 MODEL_NAME = "model.ckpt"
 
 DEFAULT_FEATURE = [[''], [0.0], [0.0], [0.0], [0.0], [0.0], [0.0], [0.0], [0.0], [0.0], [0.0], [0.0], [0.0]]
@@ -67,7 +67,7 @@ def train():
     # train = tf.train.AdamOptimizer(0.01).minimize(loss)
 
 
-    xs, ys = create_pipeline(FILENAME, BATCH_SIZE, num_epochs=2000)
+    xs, ys = create_pipeline(FILENAME, BATCH_SIZE, num_epochs=16000)
 
 
     saver = tf.train.Saver()
@@ -129,7 +129,7 @@ def train():
                                                     feed_dict=feed_dict
                                              )
             if count % 100 == 0:
-                print loss_value
+                print("after %d steps,loss is %e"%(count,loss_value))
                 saver.save(sess, os.path.join(MODEL_SAVE_PATH, MODEL_NAME), global_step=count)
             count = count + 1
             writer.add_summary(summary, count)

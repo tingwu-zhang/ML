@@ -25,15 +25,16 @@ CONV4_DEEP = 256
 CONV4_SIZE = 3
 
 FC_SIZE = 256
-
+STD_DEV = 0.01
+STD_MEAN = 0.0
 def interfence(input_tensor, train, regularizer):
 #layer1---input_tensor()
     with tf.variable_scope("layer1-conv1"):
         conv1_weights = tf.get_variable("weight",
                                     [CONV1_SIZE, CONV1_SIZE, NUM_CHANNELS, CONV1_DEEP],
-                                    initializer=tf.truncated_normal_initializer(stddev=0.1))
+                                    initializer=tf.truncated_normal_initializer(stddev=STD_DEV))
         conv1_biases = tf.get_variable(
-            "bias", [CONV1_DEEP], initializer=tf.constant_initializer(0.0, dtype=tf.float32))
+            "bias", [CONV1_DEEP], initializer=tf.constant_initializer(STD_MEAN, dtype=tf.float32))
 
         conv1 = tf.nn.conv2d(input_tensor,
                          conv1_weights,
@@ -50,10 +51,10 @@ def interfence(input_tensor, train, regularizer):
     with tf.variable_scope('layer2-conv1'):
         conv2_weights = tf.get_variable("weight",
                                         [CONV2_SIZE, CONV2_SIZE, CONV1_DEEP, CONV2_DEEP],
-                                        initializer=tf.truncated_normal_initializer(stddev=0.1))
+                                        initializer=tf.truncated_normal_initializer(stddev=STD_DEV))
         conv2_biases = tf.get_variable(
                                         'bias', [CONV2_DEEP],
-                                        initializer=tf.constant_initializer(0.0, dtype=tf.float32))
+                                        initializer=tf.constant_initializer(STD_MEAN, dtype=tf.float32))
         conv2 = tf.nn.conv2d(
             pool1, conv2_weights, strides=[1, 1, 1, 1], padding='SAME')
 
@@ -71,10 +72,10 @@ def interfence(input_tensor, train, regularizer):
     with tf.variable_scope('layer3-conv1'):
         conv3_weights = tf.get_variable("weight",
                                         [CONV3_SIZE, CONV3_SIZE, CONV2_DEEP, CONV3_DEEP],
-                                        initializer=tf.truncated_normal_initializer(stddev=0.1))
+                                        initializer=tf.truncated_normal_initializer(stddev=STD_DEV))
         conv3_biases = tf.get_variable(
                                         'bias', [CONV3_DEEP],
-                                        initializer=tf.constant_initializer(0.0, dtype=tf.float32))
+                                        initializer=tf.constant_initializer(STD_MEAN, dtype=tf.float32))
         conv3 = tf.nn.conv2d(
             pool2, conv3_weights, strides=[1, 1, 1, 1], padding='SAME')
 
@@ -89,10 +90,10 @@ def interfence(input_tensor, train, regularizer):
     with tf.variable_scope('layer4-conv1'):
         conv4_weights = tf.get_variable("weight",
                                         [CONV4_SIZE, CONV4_SIZE, CONV3_DEEP, CONV4_DEEP],
-                                        initializer=tf.truncated_normal_initializer(stddev=0.1))
+                                        initializer=tf.truncated_normal_initializer(stddev=STD_DEV))
         conv4_biases = tf.get_variable(
                                         'bias', [CONV4_DEEP],
-                                        initializer=tf.constant_initializer(0.0, dtype=tf.float32))
+                                        initializer=tf.constant_initializer(STD_MEAN, dtype=tf.float32))
         conv4 = tf.nn.conv2d(
             pool3, conv4_weights, strides=[1, 1, 1, 1], padding='SAME')
 
@@ -116,11 +117,11 @@ def interfence(input_tensor, train, regularizer):
     with tf.variable_scope('layer5-fc1'):
         fc1_weights = tf.get_variable(
             "weight", [nodes, FC_SIZE],
-            initializer=tf.truncated_normal_initializer(stddev=0.1))
+            initializer=tf.truncated_normal_initializer(stddev=STD_DEV))
 
         if regularizer != None:
             tf.add_to_collection('losses', regularizer(fc1_weights))
-        fc1_biases = tf.get_variable('bias', [FC_SIZE], initializer=tf.constant_initializer(0.1))
+        fc1_biases = tf.get_variable('bias', [FC_SIZE], initializer=tf.constant_initializer(STD_MEAN))
         fc1 = tf.nn.relu(tf.matmul(reshaped, fc1_weights) + fc1_biases)
 
         if train:
@@ -129,14 +130,14 @@ def interfence(input_tensor, train, regularizer):
     with tf.variable_scope('layer6-fc2'):
         fc2_weights = tf.get_variable(
             "weight", [FC_SIZE, NUM_LABELS],
-            initializer=tf.truncated_normal_initializer(stddev=0.1))
+            initializer=tf.truncated_normal_initializer(stddev=STD_DEV))
 
         if regularizer != None:
             tf.add_to_collection('losses', regularizer(fc2_weights))
 
         fc2_biases = tf.get_variable("bias",
                                      [NUM_LABELS],
-                                     initializer=tf.constant_initializer(0.1))
+                                     initializer=tf.constant_initializer(STD_MEAN))
 
         logit = tf.matmul(fc1, fc2_weights) + fc2_biases
 

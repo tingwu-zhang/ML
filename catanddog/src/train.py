@@ -7,10 +7,11 @@ from tensorflow.examples.tutorials.mnist import input_data
 import piclib.Transpose
 import piclib.common
 import time
+import psutil
 
 EXAMPLES_NUM = 16000
-BATCH_SIZE = 30
-LEARNING_RATE_BASE = 0.003
+BATCH_SIZE = 50
+LEARNING_RATE_BASE = 0.00003
 LEARNING_RATE_DECAY = 0.99
 REGULARAZTION_RATE = 0.001
 TRAINING_STEPS = 300000
@@ -18,6 +19,15 @@ MOVING_AVERAGE_DECAY = 0.99
 
 MODEL_SAVE_PATH = "../model"
 MODEL_NAME = "model.ckpt"
+
+
+def getMemCpu():
+    data = psutil.virtual_memory()
+    total = data.total  # 总内存,单位为byte
+    free = data.available  # 可以内存
+    memory = "Memory usage:%d" % (int(round(data.percent))) + "%" + "  "
+    cpu = "CPU:%0.2f" % psutil.cpu_percent(interval=1) + "%"
+    return memory + cpu
 
 def train(filename):
     x = tf.placeholder(tf.float32, [BATCH_SIZE,
@@ -36,7 +46,7 @@ def train(filename):
         tf.trainable_variables())
 
 
-    y=tf.clip_by_value(y,1e-8,1e+8)
+    y=tf.clip_by_value(y,1e-8,tf.reduce_max(y))
     cross_entroy = tf.nn.sparse_softmax_cross_entropy_with_logits(
          logits=y, labels=tf.argmax(y_, 1))
     cross_entroy_mean = tf.reduce_mean(cross_entroy)
@@ -50,7 +60,7 @@ def train(filename):
             EXAMPLES_NUM/BATCH_SIZE,
             LEARNING_RATE_DECAY)
     # train_step = tf.train.GradientDescentOptimizer(learning_rate).minimize(loss, global_step=global_step)
-    train_step = tf.train.AdamOptimizer(1e-3).minimize(loss, global_step=global_step)
+    train_step = tf.train.AdamOptimizer(LEARNING_RATE_BASE).minimize(loss, global_step=global_step)
 
     with tf.control_dependencies([train_step, variable_averages_op]):
         train_op = tf.no_op(name='train')
@@ -66,6 +76,7 @@ def train(filename):
     with tf.Session() as sess:
         sess.run(init)
         threads = tf.train.start_queue_runners(sess=sess, coord=coord)
+        t0 = time.time()
         for i in range(TRAINING_STEPS):
             raw_image, raw_label, raw_pixes = sess.run([image_batch, label_batch, pixes_batch])
             reshaped_xs = np.reshape(raw_image, (BATCH_SIZE,
@@ -80,7 +91,12 @@ def train(filename):
             if i % 50 == 0:
                 print("After %d training steps,loss on training batch is %g." % (step, loss_value))
                 saver.save(sess, os.path.join(MODEL_SAVE_PATH, MODEL_NAME), global_step=global_step)
+                t1 = time.time()
+                print("the %d step cost %d"%(i,t1-t0))
+                print("cpu & mem ar %s"%(getMemCpu()))
+                t0 = t1
             writer.add_summary(summary, step)
+
             time.sleep(1)
     coord.request_stop()
     coord.join(threads)

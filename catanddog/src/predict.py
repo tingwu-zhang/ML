@@ -48,7 +48,7 @@ def predict(path,filename):
         y_ = tf.placeholder(tf.float32, [1, inferency.OUTPUT_NODE], name='y-input')
 
         y = inferency.interfence(x, False, None)
-        prediction = tf.argmax(tf.clip_by_value(y,1e-8,1.0),1)
+        prediction = tf.argmax(tf.clip_by_value(y,1e-8,1e+8),1)
 
         variable_average = tf.train.ExponentialMovingAverage(MOVING_AVERAGE_DECAY)
         variables_to_restore = variable_average.variables_to_restore()
@@ -73,7 +73,8 @@ def predict(path,filename):
                     print img_name
                     img = Image.open(img_name)
                     img = img.resize((piclib.Transpose.RESIZED_IMAGE_SIZE, piclib.Transpose.RESIZED_IMAGE_SIZE))
-                    img = np.multiply(img,1.0/100.0)
+                    # img = np.multiply(img,1.0/100.0)
+                    img = tf.image.per_image_standardization(img)
                     reshaped_xs = np.reshape(img, (1,
                                                      inferency.IMAGE_SIZE,
                                                      inferency.IMAGE_SIZE,

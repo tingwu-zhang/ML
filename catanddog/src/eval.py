@@ -42,7 +42,7 @@ def evalate(filename):
         y_ = tf.placeholder(tf.float32, [None, inferency.OUTPUT_NODE], name='y-input')
 
         y = inferency.interfence(x, False, None)
-        y = tf.clip_by_value(y, -1e+8, 1e+8)
+        # y = tf.clip_by_value(y, 1e-8, 1e+8)
         correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
@@ -58,7 +58,7 @@ def evalate(filename):
         with tf.Session() as sess:
             threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
-            i = 0
+
             for step in range(VALIDATION_NUM):
                 raw_image, raw_label, raw_pixes = sess.run([image, label, pixel])
                 images.append(raw_image)
@@ -81,6 +81,8 @@ def evalate(filename):
                 if ckpt and ckpt.model_checkpoint_path:
                     saver.restore(sess, ckpt.model_checkpoint_path)
                     global_step = ckpt.model_checkpoint_path.split('/')[-1].split('-')[-1]
+                    print(sess.run(y,validata_feed))
+                    # print(sess.run(tf.argmax(y_,1),validata_feed))
                     accuracy_score = sess.run(accuracy, feed_dict=validata_feed)
                     print("After %s training steps,validation accuracy =%g" % (global_step, accuracy_score))
                 time.sleep(EVAL_INTERVAL_SEC)
